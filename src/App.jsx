@@ -38,7 +38,7 @@ const CONFIG = {
   lastName: "Kilbride",
   checkingAccount: {
     number: "****9025",
-    currentBalance: 12543.67,
+    currentBalance: 652553.00,
     availableBalance: 652553.00
   },
   savingsAccount: {
@@ -85,7 +85,7 @@ function App() {
   const [showMenu, setShowMenu] = useState(false);
   const [message, setMessage] = useState('');
   const [messageSent, setMessageSent] = useState(false);
-  const [transferAmount, setTransferAmount] = useState('652553');
+  const [transferAmount, setTransferAmount] = useState('0.00');
   const [transferAccount, setTransferAccount] = useState('');
   const [transferNote, setTransferNote] = useState('');
   const [showTransferError, setShowTransferError] = useState(false);
