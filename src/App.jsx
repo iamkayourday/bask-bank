@@ -51,26 +51,26 @@ const CONFIG = {
     number: "****5632",
     balance: 2456.89,
     availableCredit: 12543.11,
-    dueDate: "Dec 15, 2023",
+    dueDate: "Dec 15, 2025",
     minPayment: 35.00
   }
 };
 
 // Recent transactions data
 const RECENT_TRANSACTIONS = [
-  { id: 1, type: 'debit', description: 'Amazon Purchase', amount: -89.99, date: 'Dec 5, 2023', category: 'Shopping', status: 'Completed' },
-  { id: 2, type: 'credit', description: 'Direct Deposit', amount: 3200.00, date: 'Dec 1, 2023', category: 'Income', status: 'Completed' },
-  { id: 3, type: 'debit', description: 'Netflix Subscription', amount: -15.99, date: 'Nov 28, 2023', category: 'Entertainment', status: 'Completed' },
-  { id: 4, type: 'debit', description: 'Grocery Store', amount: -125.43, date: 'Nov 25, 2023', category: 'Food', status: 'Completed' },
-  { id: 5, type: 'credit', description: 'Transfer from Savings', amount: 1000.00, date: 'Nov 20, 2023', category: 'Transfer', status: 'Completed' },
-  { id: 6, type: 'debit', description: 'Gas Station', amount: -45.67, date: 'Nov 18, 2023', category: 'Transportation', status: 'Pending' },
+  { id: 1, type: 'debit', description: 'Amazon Purchase', amount: -89.99, date: 'Dec 5, 2025', category: 'Shopping', status: 'Completed' },
+  { id: 2, type: 'credit', description: 'Direct Deposit', amount: 3200.00, date: 'Dec 1, 2025', category: 'Income', status: 'Completed' },
+  { id: 3, type: 'debit', description: 'Netflix Subscription', amount: -15.99, date: 'Nov 28, 2025', category: 'Entertainment', status: 'Completed' },
+  { id: 4, type: 'debit', description: 'Grocery Store', amount: -125.43, date: 'Nov 25, 2025', category: 'Food', status: 'Completed' },
+  { id: 5, type: 'credit', description: 'Transfer from Savings', amount: 1000.00, date: 'Nov 20, 2025', category: 'Transfer', status: 'Completed' },
+  { id: 6, type: 'debit', description: 'Gas Station', amount: -45.67, date: 'Nov 18, 2025', category: 'Transportation', status: 'Pending' },
 ];
 
 // Bills data
 const UPCOMING_BILLS = [
-  { id: 1, name: 'Mortgage', amount: 1850.00, dueDate: 'Dec 15, 2023', status: 'Upcoming' },
-  { id: 2, name: 'Car Payment', amount: 420.00, dueDate: 'Dec 20, 2023', status: 'Upcoming' },
-  { id: 3, name: 'Credit Card', amount: 245.00, dueDate: 'Dec 15, 2023', status: 'Due Soon' },
+  { id: 1, name: 'Mortgage', amount: 1850.00, dueDate: 'Jan 15, 2026', status: 'Upcoming' },
+  { id: 2, name: 'Car Payment', amount: 420.00, dueDate: 'Jan 20, 2026', status: 'Upcoming' },
+  { id: 3, name: 'Credit Card', amount: 245.00, dueDate: 'Jan 10, 2026', status: 'Due Soon' },
 ];
 
 function App() {
