@@ -32,7 +32,7 @@ import { TbPigMoney } from 'react-icons/tb';
 
 // Configuration - you can edit these variables
 const CONFIG = {
-  username: "Jameskilbride ",
+  username: "Jameskilbride",
   password: "G@4actu5",
   firstName: "James",
   lastName: "Kilbride",
@@ -299,9 +299,9 @@ function App() {
                       }
                     </button>
                   </div>
-                  <p className="mt-2 text-xs text-gray-500">
+                  {/* <p className="mt-2 text-xs text-gray-500">
                     Demo: <span className="font-medium">{CONFIG.password}</span>
-                  </p>
+                  </p> */}
                 </div>
 
                 {/* Remember me & Forgot password */}
