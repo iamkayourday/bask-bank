@@ -32,7 +32,7 @@ import { TbPigMoney } from 'react-icons/tb';
 
 // Configuration - you can edit these variables
 const CONFIG = {
-  username: "Jameskilbride",
+  username: "Jameskilbride ",
   password: "G@4actu5",
   firstName: "James",
   lastName: "Kilbride",
