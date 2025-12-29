@@ -85,7 +85,7 @@ function App() {
   const [showMenu, setShowMenu] = useState(false);
   const [message, setMessage] = useState('');
   const [messageSent, setMessageSent] = useState(false);
-  const [transferAmount, setTransferAmount] = useState('0.00');
+  const [transferAmount, setTransferAmount] = useState('');
   const [transferAccount, setTransferAccount] = useState('');
   const [transferNote, setTransferNote] = useState('');
   const [showTransferError, setShowTransferError] = useState(false);
@@ -93,6 +93,8 @@ function App() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [amountError, setAmountError] = useState('');
+  const [accountError, setAccountError] = useState('');
 
   // Splash screen effect
   useEffect(() => {
@@ -134,14 +136,64 @@ function App() {
     }
   };
 
+  const handleAmountInput = (e) => {
+    const value = e.target.value;
+    // Only allow numbers and one decimal point
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setTransferAmount(value);
+      if (value && parseFloat(value) <= 0) {
+        setAmountError('Amount must be greater than 0');
+      } else if (value && parseFloat(value) > CONFIG.checkingAccount.availableBalance) {
+        setAmountError('Amount exceeds available balance');
+      } else {
+        setAmountError('');
+      }
+    }
+  };
+
+  const handleAccountInput = (e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      setTransferAccount(value);
+      if (value.length > 0 && value.length < 10) {
+        setAccountError('Account number must be 10 digits');
+      } else {
+        setAccountError('');
+      }
+    }
+  };
+
   const handleTransfer = (e) => {
     e.preventDefault();
+    
+    // Validate inputs
+    let isValid = true;
+    
+    if (!transferAmount || parseFloat(transferAmount) <= 0) {
+      setAmountError('Please enter a valid amount greater than 0');
+      isValid = false;
+    } else if (parseFloat(transferAmount) > CONFIG.checkingAccount.availableBalance) {
+      setAmountError('Amount exceeds available balance');
+      isValid = false;
+    }
+    
+    if (!transferAccount || transferAccount.length !== 10) {
+      setAccountError('Account number must be 10 digits');
+      isValid = false;
+    }
+    
+    if (!isValid) {
+      return;
+    }
+    
     setShowTransferError(true);
     setTimeout(() => {
       setShowTransferError(false);
-      setTransferAmount('652553');
+      setTransferAmount('');
       setTransferAccount('');
       setTransferNote('');
+      setAmountError('');
+      setAccountError('');
     }, 3000);
   };
 
@@ -206,6 +258,16 @@ function App() {
     transaction.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Check if transfer form is valid
+  const isTransferValid = () => {
+    const amount = parseFloat(transferAmount) || 0;
+    return (
+      amount > 0 &&
+      amount <= CONFIG.checkingAccount.availableBalance &&
+      transferAccount.length === 10
+    );
+  };
+
   if (currentScreen === 'splash') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
@@ -266,9 +328,6 @@ function App() {
                       required
                     />
                   </div>
-                  {/* <p className="mt-2 text-xs text-gray-500">
-                    Demo: <span className="font-medium">{CONFIG.username}</span>
-                  </p> */}
                 </div>
 
                 {/* Password */}
@@ -299,9 +358,6 @@ function App() {
                       }
                     </button>
                   </div>
-                  {/* <p className="mt-2 text-xs text-gray-500">
-                    Demo: <span className="font-medium">{CONFIG.password}</span>
-                  </p> */}
                 </div>
 
                 {/* Remember me & Forgot password */}
@@ -767,6 +823,11 @@ function App() {
                     onClick={() => {
                       setShowTransferModal(false);
                       setShowTransferError(false);
+                      setTransferAmount('');
+                      setTransferAccount('');
+                      setTransferNote('');
+                      setAmountError('');
+                      setAccountError('');
                     }}
                     className="p-2 hover:bg-gray-100 rounded-lg transition"
                   >
@@ -794,18 +855,22 @@ function App() {
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">$</span>
                         <input
-                          type="number"
+                          type="text"
                           value={transferAmount}
-                          onChange={(e) => setTransferAmount(e.target.value)}
-                          className="w-full pl-8 pr-3 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          onChange={handleAmountInput}
+                          className={`w-full pl-8 pr-3 py-3 text-lg border ${amountError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-500'} rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`}
                           placeholder="0.00"
-                          step="0.01"
-                          min="0"
+                          inputMode="decimal"
                         />
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Available: {formatCurrency(CONFIG.checkingAccount.availableBalance)}
-                      </p>
+                      <div className="flex justify-between mt-1">
+                        <p className="text-xs text-gray-500">
+                          Available: {formatCurrency(CONFIG.checkingAccount.availableBalance)}
+                        </p>
+                        {amountError && (
+                          <p className="text-xs text-red-600">{amountError}</p>
+                        )}
+                      </div>
                     </div>
                     
                     <div>
@@ -820,15 +885,25 @@ function App() {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        To Account
+                        To Account (10 digits)
                       </label>
                       <input
                         type="text"
                         value={transferAccount}
-                        onChange={(e) => setTransferAccount(e.target.value)}
-                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        placeholder="Enter account number or select contact"
+                        onChange={handleAccountInput}
+                        className={`w-full px-3 py-3 border ${accountError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-500'} rounded-lg focus:outline-none focus:ring-2 focus:border-transparent`}
+                        placeholder="0000000000"
+                        inputMode="numeric"
+                        maxLength={10}
                       />
+                      <div className="flex justify-between mt-1">
+                        <p className="text-xs text-gray-500">
+                          {transferAccount.length}/10 digits
+                        </p>
+                        {accountError && (
+                          <p className="text-xs text-red-600">{accountError}</p>
+                        )}
+                      </div>
                     </div>
                     
                     <div>
@@ -841,13 +916,19 @@ function App() {
                         onChange={(e) => setTransferNote(e.target.value)}
                         className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Add a note for this transfer"
+                        maxLength={50}
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {transferNote.length}/50 characters
+                      </p>
                     </div>
                     
                     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm text-gray-600">Transfer Amount:</span>
-                        <span className="text-lg font-bold text-gray-800">{formatCurrency(parseFloat(transferAmount) || 0)}</span>
+                        <span className="text-lg font-bold text-gray-800">
+                          {transferAmount ? formatCurrency(parseFloat(transferAmount) || 0) : '$0.00'}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Fee:</span>
@@ -857,14 +938,29 @@ function App() {
                     
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-medium shadow-md hover:shadow-lg text-lg"
+                      disabled={!isTransferValid()}
+                      className={`w-full py-3 rounded-lg transition font-medium shadow-md text-lg ${
+                        isTransferValid() 
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 hover:shadow-lg' 
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }`}
                     >
-                      Transfer {formatCurrency(parseFloat(transferAmount) || 0)}
+                      {isTransferValid() 
+                        ? `Transfer ${formatCurrency(parseFloat(transferAmount) || 0)}` 
+                        : 'Complete Form to Transfer'
+                      }
                     </button>
                     
                     <button
                       type="button"
-                      onClick={() => setShowTransferModal(false)}
+                      onClick={() => {
+                        setShowTransferModal(false);
+                        setTransferAmount('');
+                        setTransferAccount('');
+                        setTransferNote('');
+                        setAmountError('');
+                        setAccountError('');
+                      }}
                       className="w-full py-3 text-gray-700 hover:text-gray-900 transition font-medium border border-gray-300 rounded-lg hover:bg-gray-50"
                     >
                       Cancel
